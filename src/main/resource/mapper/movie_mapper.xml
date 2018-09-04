@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxing.movie.dto.MovieMapper">
+    <resultMap id="MovieResultMap" type="com.wwwy.liuxing.movie.dto.MovieDTO">
+        <id property="movieId" column="movie_id" javaType="java.lang.Integer"/>
+        <result property="movieName" column="movie_name" javaType="java.lang.String"/>
+        <result property="movieDirector" column="movie_director" javaType="java.lang.String"/>
+        <result property="movieStar" column="movie_star" javaType="java.lang.String"/>
+        <result property="movieType" column="movie_type" javaType="java.lang.String"/>
+        <result property="movieCountry" column="movie_country" javaType="java.lang.String"/>
+        <result property="movieLanguage" column="movie_language" javaType="java.lang.String"/>
+        <result property="movieTime" column="movie_time" javaType="java.lang.String"/>
+        <result property="movieDetails" column="movie_detail" javaType="java.lang.String"/>
+        <result property="movieDate" column="movie_date" javaType="java.lang.String"/>
+        <result property="movieScore" column="movie_score" javaType="java.lang.String"/>
+        <result property="movieImg" column="movie_img" javaType="java.lang.String"/>
+        <result property="moviePreparation" column="movie_preparation" javaType="java.lang.String"/>
+    </resultMap>
+
+    <!--根据城市名查询所有电影id,电影名，电影图片，电影评分-->
+    <select id="queryAllMovieByCityName" resultMap="MovieResultMap">
+        select distinct movie.movie_id, movie.movie_name, movie.movie_img, movie.movie_score from tb_movie movie
+        join tb_city city
+        join tb_area area
+        join tb_area_theater area_th
+        join tb_theater th
+        join tb_hall hall
+        join tb_hall_movie hall_movie
+        on city.city_id = area.fk_city_id
+        and area.area_id = area_th.fk_area_id
+        and area_th.fk_theater_id = th.theater_id
+        and th.theater_id = hall.fk_theater_id
+        and hall.hall_id = hall_movie.fk_hall_id
+        and hall_movie.fk_movie_id = movie.movie_id
+        where city.city_name=#{cityName}
+        order by movie.movie_score desc;
+    </select>
+    <!--根据影片类型，影片国家，上映时间的一个或多个条件动态查询符合条件的电影-->
+    <select id="selectMovieByCondition" resultMap="MovieResultMap">
+        SELECT movie_name FROM tb_movie
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="movieCountry !=null">
+                movie_country=#{movieCountry}
+            </if>
+            <if test="movieDate !=null">
+                AND movie_date=#{movieDate}
+            </if>
+            <if test="movieType !=null">
+                AND movie_type=#{movieType}
+            </if>
+        </trim>
+    </select>
+
+    <!--根据城市和电影名来查找电影详情-->
+    <select id="getOneMovieByCityIdAnDMovieId" resultMap="MovieResultMap">
+        select distinct m.movie_id,m.movie_star,m.movie_name,m.movie_type,m.movie_country,
+        m.movie_time,m.movie_score,m.movie_img,m.movie_date
+        from tb_movie m
+        join tb_city c
+        join tb_area area
+        join tb_area_theater area_th
+        join tb_theater th
+        join tb_hall h
+        join tb_hall_movie hm
+        on c.city_id = area.fk_city_id
+        and area.area_id = area_th.fk_area_id
+        and area_th.fk_theater_id = th.theater_id
+        and th.theater_id = h.fk_theater_id
+        and h.hall_id = hm.fk_hall_id
+        and hm.fk_movie_id = m.movie_id
+        where c.city_id=#{cityId}
+        and m.movie_id=#{movieId};
+    </select>
+
+    <!--后台查询所有电影的信息-->
+    <select id="getMovieInfo" resultMap="MovieResultMap">
+        SELECT movie_id,movie_name,movie_director,movie_star,movie_type,movie_country,movie_language,
+                movie_time,movie_detail,movie_date,movie_score,movie_img,movie_preparation FROM tb_movie
+    </select>
+
+    <select id="getMovieById" resultMap="MovieResultMap">
+        SELECT movie_id,movie_name,movie_director,movie_star,movie_type,movie_country,movie_language,
+        movie_time,movie_detail,movie_date,movie_score,movie_img,movie_preparation FROM tb_movie
+        WHERE movie_id=#{movieId}
+    </select>
+
+
+    <!--增加电影信息-->
+    <insert id="insertMovieInfo">
+        INSERT INTO tb_movie (movie_name,movie_director,movie_star,movie_type,movie_country,movie_language,
+                movie_time,movie_detail,movie_date,movie_score,movie_img,movie_preparation)
+                VALUE (#{movieName},#{movieDirector},#{movieStar},#{movieType},#{movieCountry},
+                #{movieLanguage},#{movieTime},#{movieDetails},#{movieDate},#{movieScore},#{movieImg},
+                #{moviePreparation})
+    </insert>
+
+    <!--修改电影信息-->
+    <update id="updateMovieInfo">
+          UPDATE tb_movie
+            <trim prefix="set" suffixOverrides=",">
+            <if test="movieName!=null">movie_name=#{movieName},</if>
+            <if test="movieDirector!=null">movie_director=#{movieDirector},</if>
+            <if test="movieStar!=null">movie_star=#{movieStar},</if>
+            <if test="movieType!=null">movie_type=#{movieType},</if>
+            <if test="movieCountry!=null">movie_country=#{movieCountry},</if>
+            <if test="movieLanguage!=null">movie_language=#{movieLanguage},</if>
+            <if test="movieTime!=null">movie_time=#{movieTime},</if>
+            <if test="movieDetails!=null">movie_detail=#{movieDetails},</if>
+            <if test="movieDate!=null">movie_date=#{movieDate},</if>
+            <if test="movieScore!=null">movie_score=#{movieScore},</if>
+            <if test="movieImg!=null">movie_img=#{movieImg},</if>
+            <if test="moviePreparation!=null">movie_preparation=#{moviePreparation},</if>
+            </trim>
+        WHERE movie_id=#{movieId}
+    </update>
+
+    <!--通过ID查询电影信息-->
+    <select id="getMovieInfoById" resultMap="MovieResultMap">
+        SELECT movie_id,movie_name,movie_director,movie_star,movie_type,movie_country,movie_language,
+                movie_time,movie_detail,movie_date,movie_score,movie_img,movie_preparation FROM tb_movie
+                WHERE movie_id =#{movieId}
+    </select>
+
+    <!--通过ID删除电影信息-->
+    <delete id="deleteMovieInfoById">
+        DELETE  FROM tb_movie WHERE movie_id =#{movieId}
+    </delete>
+
+    <!--条件查询电影信息-->
+    <select id="criteriaQueryMovie" resultMap="MovieResultMap">
+        SELECT movie_id,movie_name,movie_director,movie_star,movie_type,movie_country,movie_language,
+                movie_time,movie_detail,movie_date,movie_score,movie_img,movie_preparation FROM tb_movie
+        WHERE movie_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_director LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_star LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_type LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_country LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_language LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_time LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_date LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_score LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+</mapper>

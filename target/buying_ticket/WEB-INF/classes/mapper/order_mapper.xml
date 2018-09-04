@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxin.order.dto.OrderMapper">
+    <resultMap id="OrderResultMap" type="com.wwwy.liuxing.order.dto.OrderDTO">
+        <id property="cartId" column="cart_id" javaType="java.lang.Integer"/>
+        <result property="bookingNum" column="booking_num" javaType="java.lang.Integer"/>
+        <result property="movieName" column="movie_name" javaType="java.lang.String"/>
+        <result property="movieVersion" column="movie_version" javaType="java.lang.String"/>
+        <result property="movieTime" column="movie_time" javaType="java.lang.String"/>
+        <result property="movieImg" column="movie_img" javaType="java.lang.String"/>
+        <result property="cinemaName" column="cinema_name" javaType="java.lang.String"/>
+        <result property="hallName" column="hall_name" javaType="java.lang.String"/>
+        <result property="movieRound" column="movie_round" javaType="java.lang.String"/>
+        <result property="place" column="place" javaType="java.lang.String"/>
+        <result property="originalPrice" column="original_price" javaType="java.lang.Integer"/>
+        <result property="totalPrice" column="total_price" javaType="java.lang.Integer"/>
+        <result property="tel" column="tel" javaType="java.lang.String"/>
+
+    </resultMap>
+
+    <select id="queryAll" resultMap="OrderResultMap">
+        SELECT cart_id,booking_num,movie_name,movie_version,movie_time,movie_img,cinema_name,hall_name,movie_round,place,original_price,total_price,tel
+        FROM tb_shoppingcart
+    </select>
+
+    <select id="queryAny" resultMap="OrderResultMap">
+        SELECT cart_id,booking_num,movie_name,movie_version,movie_time,movie_img,cinema_name,hall_name,movie_round,place,original_price,total_price,tel
+        FROM tb_shoppingcart
+        WHERE cart_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR booking_num LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR movie_version LIKE concat(concat('%',#{anyInfo}),'%')
+        OR cinema_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR total_price LIKE concat(concat('%',#{anyInfo}),'%')
+        OR tel LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+
+</mapper>

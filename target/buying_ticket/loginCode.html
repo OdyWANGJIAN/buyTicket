@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+    <div>
+        <table>
+            <tr>
+                <td>手机号：<input type="text" name="telephone" id="telephone" onfocus="acquireFocus()"
+                               onblur="checkTele()"/></td>
+                <td><span id="teleSpan"></span></td>
+            </tr>
+            <tr>
+                <td>验证码：<input type="text" name="inputCode" id="inputCode"/></td>
+                <td><input type="button" id="codeButton" name="getCode" value="获取验证码" onclick="getcode()" disabled="disabled"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" value="登陆" onclick="codeLogin()"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+</body>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+    function getcode() {
+        var tele = $("#telephone").val();
+        $.post("/message/getCode", {telephone: tele}, function (data) {
+            var result = JSON.parse(data);
+            if (result.code == 1) {
+                alert(result.msg);
+            } else if (result.code == 0) {
+                alert(result.msg);
+            }
+        });
+    }
+    function codeLogin() {
+        var code = $("#inputCode").val();
+        var regex=/^[0-9]{6}$/
+        if(code.match(regex)){
+            alert("验证成功");
+            $.post("/message/login", {inputCode: code}, function (data) {
+                alert(data);
+                if (data == "登陆成功") {
+                    window.location.href = "/success.html"
+                }
+                if (data == "登陆失败") {
+                    alert(data);
+                }
+            });
+        }else {
+            alert("请输入正确的验证码");
+            $("#inputCode").val("");
+        }
+    }
+    function acquireFocus() {
+        $("#teleSpan").text("");
+    }
+    function checkTele() {
+        var tele = $("#telephone").val();
+        var patrn = /^[1]([3]|[5]|[8]){1}[0-9]{9}$/;
+        if (tele != "") {
+            if (tele.match(patrn)) {
+                $("#codeButton").attr("disabled",false);
+            } else {
+                $("#teleSpan").text("您输入的手机号格式错误");
+                $("#codeButton").attr("disabled",true);
+            }
+        } else {
+            $("#teleSpan").text("请输入手机号");
+            $("#codeButton").attr("disabled",true);
+        }
+    }
+</script>
+</html>

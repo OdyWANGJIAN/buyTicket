@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxin.area.dto.AreaMapper">
+    <resultMap id="AreaResultMap" type="com.wwwy.liuxing.area.dto.AreaDTO">
+        <id property="areaId" column="area_id" javaType="java.lang.Integer"/>
+        <result property="areaName" column="area_name" javaType="java.lang.String"/>
+        <result property="fkCityId" column="fk_city_id" javaType="java.lang.Integer"/>
+
+        <association property="cityDTO" javaType="com.wwwy.liuxing.city.dto.CityDTO">
+            <id property="cityId" column="city_id" javaType="java.lang.Integer"/>
+            <result property="cityName" column="city_name" javaType="java.lang.String"/>
+        </association>
+
+        <collection property="theaterDTOList" ofType="com.wwwy.liuxing.theater.dto.TheaterDTO">
+            <id property="theaterId" column="theater_id" javaType="java.lang.Integer"/>
+            <result property="theaterName" column="theater_name" javaType="java.lang.String"/>
+            <result property="theaterAddress" column="theater_address" javaType="java.lang.String"/>
+            <result property="theaterPhone" column="theater_phone" javaType="java.lang.String"/>
+            <result property="theaterLongitude" column="theater_longitude" javaType="java.lang.String"/>
+            <result property="theaterLatitude" column="theater_latitude" javaType="java.lang.String"/>
+        </collection>
+
+
+
+    </resultMap>
+
+    <select id="queryAllArea" resultMap="AreaResultMap">
+        SELECT a.area_id,a.area_name,a.fk_city_id,ci.city_id,ci.city_name FROM tb_area a JOIN tb_city ci ON a.fk_city_id=ci.city_id
+        WHERE a.fk_city_id=#{fkCityId}
+    </select>
+
+
+
+    <select id="queryAreaById" resultMap="AreaResultMap">
+        SELECT area_id,area_name,fk_city_id FROM tb_area WHERE area_id=#{areaId}
+    </select>
+
+    <insert id="insertArea">
+        INSERT INTO tb_area(area_name,fk_city_id)VALUES (#{areaName},#{fkCityId})
+    </insert>
+
+    <delete id="deleteArea">
+        DELETE FROM tb_area WHERE area_id=#{areaId}
+    </delete>
+
+    <update id="updateArea">
+        UPDATE tb_area
+        <trim prefix="set" suffixOverrides=",">
+            <if test="areaName!=null">area_name=#{areaName},</if>
+            <if test="fkCityId!=null">fk_city_id=#{fkCityId},</if>
+        </trim>
+        WHERE area_id=#{areaId}
+    </update>
+
+    <select id="queryAny" resultMap="AreaResultMap">
+        SELECT a.area_id,a.area_name,a.fk_city_id,ci.city_id,ci.city_name FROM tb_area a JOIN tb_city ci ON a.fk_city_id=ci.city_id
+        WHERE a.area_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR a.area_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR ci.city_name LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+    <!--批量删除-->
+    <delete id="batchDeleteAreas" parameterType="int">
+        delete from tb_area where area_id in
+        <foreach item="areaId" collection="array" open="(" separator="," close=")">
+            #{areaId}
+        </foreach>
+    </delete>
+
+</mapper>

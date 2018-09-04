@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxing.theater.dto.TheaterMapper">
+    <resultMap id="TheaterResultMap" type="com.wwwy.liuxing.theater.dto.TheaterDTO">
+        <id property="theaterId" column="theater_id" javaType="java.lang.Integer"/>
+        <result property="theaterName" column="theater_name" javaType="java.lang.String"/>
+        <result property="theaterAddress" column="theater_address" javaType="java.lang.String"/>
+        <result property="theaterPhone" column="theater_phone" javaType="java.lang.String"/>
+        <result property="theaterLongitude" column="theater_longitude" javaType="java.lang.String"/>
+        <result property="theaterLatitude" column="theater_latitude" javaType="java.lang.String"/>
+
+        <collection property="hallDTOList" ofType="com.wwwy.liuxing.hall.dto.HallDTO">
+            <id property="hallId" column="hall_id" javaType="java.lang.Integer"/>
+            <result property="hallName" column="hall_name" javaType="java.lang.String"/>
+            <result property="fkTheaterId" column="fk_theater_id" javaType="java.lang.Integer"/>
+            <result property="hallCoordinateX" column="hall_coordinateX" javaType="java.lang.Integer"/>
+            <result property="hallCoordinateY" column="hall_coordinateY" javaType="java.lang.Integer"/>
+        </collection>
+    </resultMap>
+<select id="queryByPattern" resultMap="TheaterResultMap">
+    SELECT theater_id,theater_name,theater_address,theater_phone,theater_longitude,theater_latitude FROM tb_theater
+    WHERE theater_name LIKE "%"#{name}"%"
+</select>
+    <!--####根据城市和电影获取放映该电影的电影院名和影院地址 （影院最低价格 用另一个sql在hallmovie_mapper.xml中查询每个放映该电影的最低价格））-->
+    <select id="queryLowestPriceTheaterList" resultMap="TheaterResultMap">
+        select distinct th.theater_id, th.theater_name,th.theater_address
+        from tb_city c
+        join tb_area area
+        join tb_area_theater area_th
+        join tb_theater th
+        join tb_hall h
+        join tb_hall_movie hm
+        join tb_movie m
+        on c.city_id = area.fk_city_id
+        and area.area_id = area_th.fk_area_id
+        and area_th.fk_theater_id = th.theater_id
+        and th.theater_id = h.fk_theater_id
+        and h.hall_id = hm.fk_hall_id
+        and hm.fk_movie_id = m.movie_id
+        where c.city_id=#{cityId}
+        and m.movie_id=#{movieId} ;
+    </select>
+
+    <!--根据地区查询所有的影院-->
+    <select id="queryAllTheater" resultMap="TheaterResultMap">
+        SELECT t.theater_id,t.theater_name,t.theater_address,t.theater_phone,t.theater_longitude,t.theater_latitude
+        FROM tb_theater t JOIN tb_area_theater ta JOIN tb_area a on (t.theater_id=ta.fk_theater_id AND ta.fk_area_id=a.area_id)
+        WHERE a.area_name=#{areaName}
+    </select>
+
+    <select id="queryTheaterById" resultMap="TheaterResultMap">
+        SELECT theater_id,theater_name,theater_address,theater_phone,theater_longitude,theater_latitude FROM tb_theater WHERE theater_id=#{theaterId}
+    </select>
+
+    <select id="queryTheaterByName" resultMap="TheaterResultMap">
+        SELECT theater_id,theater_name,theater_address,theater_phone,theater_longitude,theater_latitude FROM tb_theater WHERE theater_name=#{theaterName}
+    </select>
+
+    <insert id="insertTheater">
+        INSERT INTO tb_theater(theater_name,theater_address,theater_phone,theater_longitude,theater_latitude)VALUES
+         (#{theaterName},#{theaterAddress},#{theaterPhone},#{theaterLongitude},#{theaterLatitude})
+    </insert>
+
+    <delete id="deleteTheater">
+        DELETE FROM tb_theater WHERE theater_id=#{theaterId}
+    </delete>
+
+    <update id="updateTheater">
+        UPDATE tb_theater
+        <trim prefix="set" suffixOverrides=",">
+            <if test="theaterName!=null">theater_name=#{theaterName},</if>
+            <if test="theaterAddress!=null">theater_address=#{theaterAddress},</if>
+            <if test="theaterPhone!=null">theater_phone=#{theaterPhone},</if>
+            <if test="theaterLongitude!=null">theater_longitude=#{theaterLongitude},</if>
+            <if test="theaterLatitude!=null">theater_latitude=#{theaterLatitude},</if>
+        </trim>
+        WHERE theater_id=#{theaterId}
+    </update>
+
+    <select id="queryAny" resultMap="TheaterResultMap">
+        SELECT theater_id,theater_name,theater_address,theater_phone,theater_longitude,theater_latitude FROM tb_theater WHERE
+        theater_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR theater_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR theater_address LIKE concat(concat('%',#{anyInfo}),'%')
+        OR theater_phone LIKE concat(concat('%',#{anyInfo}),'%')
+        OR theater_longitude LIKE concat(concat('%',#{anyInfo}),'%')
+        OR theater_latitude LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+    <!--批量删除-->
+    <delete id="batchDeleteAreas" parameterType="int">
+        delete from tb_theater where theater_id in
+        <foreach item="theaterId" collection="array" open="(" separator="," close=")">
+            #{theaterId}
+        </foreach>
+    </delete>
+</mapper>

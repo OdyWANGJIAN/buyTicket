@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>流星购票网后台管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="/css/J1706.css" rel="stylesheet"/>
+    <link href="/css/wedding-3.css" rel="stylesheet"/>
+    <script src="/js/jquery-2.1.4.js" type="text/javascript"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <!--<script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>-->
+    <![endif]-->
+</head>
+<script type="text/javascript">
+    function doDelete(id){
+        if(confirm("确认删除吗？")){
+            $.post("/areaTheater/delete",
+                    {id:id},
+                    function (data) {
+                        if(data=="success"){
+                            alert("删除成功");
+                            window.location.href='/areaTheater/all?page='+1;
+                        }else {
+                            alert("删除失败");
+                        }
+                    });
+        }
+    }
+
+    function doUpdate(id){
+        window.location.href='/areaTheater/preUpdate?id='+id;
+    }
+
+    function checkAll(item){
+        //获取历史列表所有的复选框
+        var elements = document.getElementsByName("hisChk")
+        //alert(item.checked);打钩 true  否则 false
+        //逐个遍历每一个
+        for(var i=0;i<elements.length;i++){
+            if(item.checked){
+                elements[i].checked =true;
+            }else{
+                elements[i].checked =false;
+            }
+        }
+    }
+    function deleteSelectAll(){
+        if(!confirm('确认删除吗?')){
+            return ;
+        }
+        //获取列表所有的复选框
+        var elements = document.getElementsByName("hisChk");
+        //逐个遍历每个复选框是否选中，如果条件成立  取到id         ids=1,5,10,
+        var ids = "";
+        for (var i = 0; i < elements.length; i++) {
+            // 复选框选中状态
+            if (elements[i].checked) {
+                ids += elements[i].value + ",";
+            }
+        }
+        if(ids.length==0){
+            alert("未选中目标");
+            return;
+        }
+        // 提交请求
+        $.post("/areaTheater/deleteBatch",
+                {ids:ids},
+                function (data) {
+                    if(data=="success"){
+                        alert("删除成功");
+                        window.location.href='/areaTheater/all?page='+1;
+                    }else {
+                        alert("删除失败");
+                        return;
+                    }
+                });
+
+    }
+
+    function addInfo() {
+        window.location.href='/hou_area_theater_add.html';
+    }
+</script>
+<body>
+
+<div>
+
+    <form action="/areaTheater/anyInfo?page=1" method="post" class="form_find">
+        <input type="button" name="add" value="新增" style="font-size: 20px;background-color: #2e8ded" onclick="addInfo()">
+        <input type="text" name="anyInfo" style="height: 40px">
+        <input type="submit" value="find" style="font-size: 20px;background-color: #00BCD4">
+        <input type="button" name="allDelBtn" style="font-size: 20px;margin: 20px 0 -10px 150px;color: #2d98f3;background-color: tomato" value="删除" onclick="deleteSelectAll()"/>
+    </form>
+    <table border="1" width="60%" style="line-height: 40px" class="water-table">
+        <thead class="water-table-content" style="font-size:16px;font-weight: bolder">
+        <td style="font-size: medium">id</td>
+        <td width="3%" align="center" ztype="selector" field="id">
+            <input type="checkbox" value="*" id="dg1_AllCheck" onclick="checkAll(this)">
+        </td>
+        <td style="font-size: medium">地区id</td>
+        <td style="font-size: medium">地区名称</td>
+        <td style="font-size: medium">影院id</td>
+        <td style="font-size: medium">影院名称</td>
+        <td style="font-size: medium">操作</td>
+        </thead>
+        <#list areaTheaterDTOList as arTh>
+            <tr class="water-table-content">
+                <td style="font-size: medium">${arTh.arThId}</td>
+                <td align="center">
+                    <input type="checkbox" name="hisChk" id="dg1_RowCheck1" value="${arTh.arThId}">
+                </td>
+                <td style="font-size: medium">${arTh.fkArId}</td>
+                <td style="font-size: medium">${arTh.areaName}</td>
+                <td style="font-size: medium">${arTh.fkThId}</td>
+                <td style="font-size: medium">${arTh.theaterName}</td>
+                <td>
+                    <input type="button"  value="删除" style="font-size: medium;font-weight: 200" onClick="doDelete(${arTh.arThId})"/>
+                    <input type="button"  value="修改" style="font-size: medium;font-weight: 200" onClick="doUpdate(${arTh.arThId})"/>
+                </td>
+            </tr>
+        </#list>
+    </table>
+</div>
+
+<div class="ma_page">
+    <p style="font-size: 14px">当前页${page.pageNum}&nbsp;&nbsp;&nbsp;一共${page.pages}页</p>
+    <a href="/areaTheater/anyInfo?page=${page.firstPage}">首页</a>
+    <a href="/areaTheater/anyInfo?page=${page.nextPage}">下一页</a>
+    <a href="/areaTheater/anyInfo?page=${page.prePage}">上一页</a>
+    <a href="/areaTheater/anyInfo?page=${page.lastPage}">末页</a>
+</div>
+
+
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

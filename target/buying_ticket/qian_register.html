@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="data-spm" content="a2145" />
+    <link rel="shortcut icon" href="//img.alicdn.com/favicon.ico" type="image/x-icon" />
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//g.alicdn.com/tb/global/3.5.34/global-min.css">
+    <link href="//assets.alicdn.com/g/vip/register/2.9.5/xcommon/css/??base.css,form.css,btn.css,dialog.css,msg.css,responsive.css,mobile-check.css?t=201404171640" rev="stylesheet" rel="stylesheet" />
+</head>
+<body data-spm="7268393">
+<script src="js/layer.ext.js"></script>
+<script src="js/jquery-2.1.4.js" type="text/javascript"/>
+<script src="js/layer.js"></script>
+<script>
+    with(document)with(body)with(insertBefore(createElement("script"),firstChild))setAttribute("exparams","category=&userid=&aplus&yunid=&365bf83a3be8b&trid=0b83e2d015235157599373345ea4f1&asid=AQAAAABvAc9aGyYJJAAAAAASaoM83r+2Ng==",id="tb-beacon-aplus",src=(location>"https"?"//g":"//g")+".alicdn.com/alilog/mlog/aplus_v2.js")
+</script>
+<script type="text/javascript">
+    function cheak() {
+        var userNameStr = $("#userName").val();
+        var passWordStr = $("#userPassword").val();
+        var passWordStrTwo = $("#inputPassword2").val();
+        var userStr = $("#userRealName").val();
+        var telStr = $("#userTel").val();
+        var UsernameReg = /^[a-zA-Z0-9]{8,15}$/;
+        var inputPassword3Reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,12}$/;
+        var userName1Reg = /^[\u4e00-\u9fa5]{2,4}$/;
+        var telReg = /^[1][3|4|5|7|8][0-9]{9}$/;
+        if (!(UsernameReg.test(userNameStr))) {
+            alert("用户名大于8位且字母数字搭配")
+            document.getElementById("userName").innerText = "用户名大于8位且字母数字搭配";
+            return false;
+        } else {
+            if (!(inputPassword3Reg.test(passWordStr))) {
+                alert("密码必须8-12位字母数字搭配")
+                document.getElementById("userPassword").innerText = "密码必须大于8位";
+                return false;
+            } else {
+                if (!(passWordStrTwo == passWordStr)) {
+                    alert("俩次密码不一致")
+                    document.getElementById("inputPassword2").innerText = "俩次密码不一致";
+                    return false;
+                } else {
+                    if (!(userName1Reg.test(userStr))) {
+                        alert("昵称为2-4汉字")
+                        document.getElementById("userRealName").innerText = "昵称为2-4汉字";
+                        return false;
+                    }else {
+                        if (!(telReg.test(telStr))) {
+                            alert("手机号必须以1开头，第二位为3,4,5,7,8，总长度为11位")
+                            document.getElementById("userTel").innerText = "手机号必须以1开头，第二位为3,4,5,7,8，总长度为11位";
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    function commit1() {
+        if (cheak()){
+            var userNameStr = $("#userName").val();
+            var passWordStr = $("#userPassword").val();
+            var passWordStrTwo = $("#inputPassword2").val();
+            var userStr = $("#userRealName").val();
+            var telStr = $("#userTel").val();
+            var inputCode=$("#inputCode").val();
+            var errArrays = new Array();
+            errArrays[0] = '手机号码已注册，请更换';
+            errArrays[1] = '注册成功';
+            errArrays[2]='验证码错误'
+            $.post("/user/register",{userName:userNameStr,userPassword:passWordStr,
+                userRealName:userStr,userTel:telStr,inputCode:inputCode}, function(data) {
+                var jsonObj = JSON.parse(data)
+                var index =jsonObj.code;
+                if (jsonObj.code == 1) {
+                    alert(errArrays[index])
+                    window.location.href="/qian_login.htm";
+                } else {
+                    alert(errArrays[index]);
+                }
+            });}
+    }
+    function getcode() {
+        var tele = $("#userTel").val();
+            $("#codeButton").attr("disabled", true);
+            timer = setInterval("CountDown()", 1000);
+            $.post("/message/getCode", {telephone: tele}, function (data) {
+                var result = JSON.parse(data);
+                if (result.code == 1) {
+                    alert(result.msg);
+                } else if (result.code == 0) {
+                    alert(result.msg);
+                }
+            });
+    }
+    function CountDown() {
+        if (maxtime >= 0) {
+            $("#codeButton").css("color","red");
+            $("#codeButton").val("重新获取(" + maxtime + ")");
+            var val = $("#codeButton").val();
+            --maxtime;
+        }
+        else {
+            $("#codeButton").val("获取验证码");
+            $("#codeButton").attr("disabled", false);
+            clearInterval(timer);
+            maxtime=4*60+59;
+        }
+    }
+    function checkTele() {
+        var tele = $("#telephone").val();
+        var patrn = /^[1]([3]|[5]|[8]){1}[0-9]{9}$/;
+        if (tele != "") {
+            if (tele.match(patrn)) {
+                $("#codeButton").attr("disabled", false);
+            } else {
+                $("#teleSpan").text("手机号格式错误");
+                $("#codeButton").attr("disabled", true);
+            }
+        } else {
+            /*$("#teleSpan").text("请输入手机号");*/
+            $("#codeButton").attr("disabled", true);
+        }
+    }
+</script>
+
+
+<!-- S GLOBAL HTML -->
+<div id="J_SiteNav" class="site-nav">
+    <div id="J_SiteNavBd" class="site-nav-bd">
+        <ul id="J_SiteNavBdL" class="site-nav-bd-l"></ul>
+        <ul id="J_SiteNavBdR" class="site-nav-bd-r"></ul>
+    </div>
+</div>
+
+<div class="page lang-zh-S" style="text-align: center;">
+
+    <input class="J_From" type="hidden" value="TB"/>
+    <input class="J_AllowIframe" type="hidden"  value="false"  />
+
+    <!-- register011131037046.center.et2 -->
+
+    <input type="hidden" id="J_Member" value="member.9"/>
+
+    <div class="header">
+        <div class="logo">
+            <h2><i class="iconfont tb-logo-cn">&#x35b8;</i><i class="iconfont tb-logo-url">&#x35b7;</i></h2>
+            <h2>用户注册</h2>
+        </div>
+    </div>
+
+    <div class="steps steps-4">
+
+    </div>
+
+    <div style="width:1100px;height:600px" >
+        <form class="form-horizontal">
+            <div class="form-group col-lg-5" style="margin-top: 20px;height: 70px; width:700px; margin-left: 400px;">
+                <label for="userName" class="col-sm-2 control-label" style="margin-top: 20px">用户名</label>
+                <div class="col-sm-10" style="margin-top: 20px">
+                    <input type="text" class="form-control" id="userName" name="userName" placeholder="用户名大于8位且字母数字搭配">
+                </div>
+            </div>
+            <div class="form-group col-lg-5"style="height: 70px;width:700px; margin-left: 400px;">
+                <label for="userPassword" class="col-sm-2 control-label"style="margin-top: 20px">密码</label>
+                <div class="col-sm-10"style="margin-top: 20px">
+                    <input type="text" class="form-control" id="userPassword"name="userPassword" placeholder="密码必须大于8位">
+                </div>
+            </div>
+            <div class="form-group col-lg-5"style="height:70px;width:700px; margin-left: 400px;">
+                <label for="inputPassword2" class="col-sm-2 control-label"style="margin-top: 20px" >确认密码</label>
+                <div class="col-sm-10"style="margin-top: 20px">
+                    <input type="text" class="form-control" id="inputPassword2" name="inputPassword2" placeholder="确认密码">
+                </div>
+            </div>
+            <div class="form-group col-lg-5"style="height: 70px;width:700px; margin-left: 400px;">
+                <label for="userRealName" class="col-sm-2 control-label"style="margin-top: 20px">昵称</label>
+                <div class="col-sm-10"style="margin-top: 20px">
+                    <input type="text" class="form-control" id="userRealName" name="userRealName" placeholder="昵称为2-4汉字">
+                </div>
+            </div>
+            <div class="form-group col-lg-5"style="height: 70px; width:700px; margin-left: 400px;">
+                <label for="userTel" class="col-sm-2 control-label"style="margin-top: 20px">电话号码</label>
+                <div class="col-sm-10"style="margin-top: 20px">
+                    <input type="text" class="form-control" id="userTel" name="userTel" placeholder="输入正确的手机号码">
+                </div>
+            </div>
+            <div class="form-group col-lg-5"style="height: 70px; width:700px; margin-left: 400px;">
+                <label for="inputCode" class="col-sm-2 control-label"style="margin-top: 20px">验证码</label>
+                <div class="col-sm-10"style="margin-top: 20px">
+                    <div style="width: 500px;height: 34px">
+                    <input type="text"  style="width: 195px;height:34px;float: left" id="inputCode" name="inputCode" placeholder="输入验证码">
+                    <span><input type="button" value="获取验证码" id="codeButton" name="codeButton" style="width: 80px;height:34px;float: left;margin-left: 20px" onclick="getcode()"/></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 30px;">
+                <div class="col-sm-offset-2 col-sm-10" style="margin-top: 30px;">
+                    <input type="button" class="btn btn-default" value="立即注册" onclick="commit1()">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- UE -->
+<div class="ue-suggest">
+    <img width="18" height="18" alt="注册改进建议" src="//img.alicdn.com/tps/i4/T1Pt0FXmJcXXXXXXXX-18-18.png">
+    <a target="_blank" href="//ur.taobao.com/survey/view.htm?id=587">"淘宝注册"改进建议</a>
+</div>
+<!-- 页脚 -->
+<div class="footer">
+    <div class="footer-hd">
+        <p>
+            <a href="//page.1688.com/shtml/about/ali_group1.shtml">阿里巴巴集团</a>
+            <b>|</b>
+            <a href="//www.alibaba.com">阿里巴巴国际站</a>
+            <b>|</b>
+            <a href="//www.1688.com">阿里巴巴中国站</a>
+            <b>|</b>
+            <a href="//www.aliexpress.com">全球速卖通</a>
+            <b>|</b>
+            <a href="//www.taobao.com">淘宝网</a>
+            <b>|</b>
+            <a href="//www.tmall.com">天猫</a>
+            <b>|</b>
+            <a href="//ju.taobao.com">聚划算</a>
+            <b>|</b>
+            <a href="//www.etao.com">一淘</a>
+            <b>|</b>
+            <a href="//www.alimama.com">阿里妈妈</a>
+            <b>|</b>
+            <a href="//www.aliyun.com">阿里云计算</a>
+            <b>|</b>
+            <a href="//www.yunos.com">云OS</a>
+            <b>|</b>
+            <a href="//www.net.cn">万网</a>
+            <b>|</b>
+            <a href="//www.alipay.com">支付宝</a>
+        </p>
+    </div>
+    <div class="footer-bd">
+        <p>
+            <a href="//www.taobao.com/about">关于淘宝</a>
+            <a href="//www.taobao.com/about/partners.php">合作伙伴</a>
+            <a href="//pro.taobao.com">营销中心</a>
+            <a href="//service.taobao.com/support/main/service_route.htm">联系客服</a>
+            <a href="//open.taobao.com">开放平台</a>
+            <a href="//www.taobao.com/about/join.php">诚征英才</a>
+            <a href="//consumerservice.taobao.com/contact-us">联系我们</a>
+            <a href="//www.taobao.com/sitemap.php">网站地图</a>
+            <a href="//terms.alicdn.com/legal-agreement/terms/suit_bu1_taobao/suit_bu1_taobao201703241622_61002.html">法律声明及隐私权政策</a>
+            <em>&copy; 2018 Taobao.com 版权所有</em>
+        </p>
+        <p>
+            <span>网络文化经营许可证：<a href="//img.alicdn.com/tps/i4/T1ysdvXtNeXXcPpEkQ-972-636.jpg">文网文[2010]040号</a></span>
+            <b>|</b>
+            <span>增值电信业务经营许可证：浙B2-20080224-1</span>
+            <b>|</b>
+            <span>信息网络传播视听节目许可证：1109364号</span>
+        </p>
+    </div>
+    <div class="footer-ft">
+        <a href="//www.pingpinganan.gov.cn/web/index.aspx?file=index.aspx"><img width="36" height="36" src="//img.alicdn.com/tps/i1/T1FeW3XXNfXXXXXXXX-36-36.gif"></a>
+        <a href="//idinfo.zjaic.gov.cn/bscx.do?method=hddoc&id=33018400000067" class="mod mod-a"></a>
+        <a href="//idinfo.zjaic.gov.cn/bscx.do?&method=hddoc&id=33018400000067" class="mod mod-b"></a>
+        <a href="//www.theclimategroup.org.cn/about/friend" class="mod mod-c"></a>
+        <a href="https://ss.cnnic.cn/verifyseal.dll?&sn=2010062300100001357&pa=20100701" class="mod mod-d"></a>
+        <a href="//www.ppaaol.com/verifySite.do?id=1051" class="mod mod-e"></a>
+    </div>
+    <div class="footer-toy"></div>
+
+    <div id="server-num" style="color:#FFF;font-size:11px;text-align:center">register011131037046.center.et2</div>
+</div>
+<!-- 页脚 -->
+<!-- S GLOBAL JS -->
+<script data-config="{combine:true}" src="//g.alicdn.com/??kissy/k/1.4.7/seed-min.js,tb/global/3.5.34/global-min.js"></script>
+<!-- E GLOBAL JS -->
+
+<!--注册-->
+<script src="//assets.alicdn.com/g/vip/register/2.9.5/xcommon/js/??reg.js,atp.js,q.js,components/xerror.js,components/timeoutbtn.js,components/mobile-select.js,components/checkcode.js,components/message.js,mobile-reg.js,utils/checkenable.js,utils/messages.js,utils/checkcode.js" charset="utf-8"></script>
+<script src="//g.alicdn.com/crm/alicare-dialog/0.0.4/include.js" charset="utf-8"></script>
+
+</body>
+
+</html>

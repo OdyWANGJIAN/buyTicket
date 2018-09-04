@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--开启日志输出-->
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+    <!--<environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/db_j1706"/>
+                <property name="username" value="root"/>
+                <property name="password" value=""/>
+            </dataSource>
+        </environment>
+    </environments>-->
+
+
+
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- config params as the following -->
+
+            <property name="pageSizeZero" value="true"/>
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+    <mappers>
+        <mapper resource="mapper/user_mapper.xml"/>
+        <mapper resource="mapper/area_mapper.xml"/>
+        <mapper resource="mapper/theater_mapper.xml"/>
+        <mapper resource="mapper/hall_mapper.xml"/>
+        <mapper resource="mapper/hallmovie_mapper.xml"/>
+        <mapper resource="mapper/movie_mapper.xml"/>
+        <mapper resource="mapper/city_mapper.xml"/>
+        <mapper resource="mapper/admin_mapper.xml"/>
+        <mapper resource="mapper/position.mapper.xml"/>
+        <mapper resource="mapper/area_theater_mapper.xml"/>
+        <mapper resource="mapper/order_mapper.xml"/>
+    </mappers>
+</configuration>

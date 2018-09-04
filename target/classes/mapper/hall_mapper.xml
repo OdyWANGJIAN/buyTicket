@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxing.hall.dto.HallMapper">
+    <resultMap id="HallResultMap" type="com.wwwy.liuxing.hall.dto.HallDTO">
+        <id property="hallId" column="hall_id" javaType="java.lang.Integer"/>
+        <result property="hallName" column="hall_name" javaType="java.lang.String"/>
+        <result property="fkTheaterId" column="fk_theater_id" javaType="java.lang.Integer"/>
+        <result property="hallCoordinateX" column="hall_coordinateX" javaType="java.lang.Integer"/>
+        <result property="hallCoordinateY" column="hall_coordinateY" javaType="java.lang.Integer"/>
+        <collection property="movieDTOList" ofType="com.wwwy.liuxing.movie.dto.MovieDTO">
+            <id property="movieId" column="movie_id" javaType="java.lang.Integer"/>
+            <result property="movieName" column="movie_name" javaType="java.lang.String"/>
+            <result property="movieDirector" column="movie_director" javaType="java.lang.String"/>
+            <result property="movieStar" column="movie_star" javaType="java.lang.String"/>
+            <result property="movieType" column="movie_type" javaType="java.lang.String"/>
+            <result property="movieCountry" column="movie_country" javaType="java.lang.String"/>
+            <result property="movieLanguage" column="movie_language" javaType="java.lang.String"/>
+            <result property="movieTime" column="movie_time" javaType="java.lang.String"/>
+            <result property="movieDetails" column="movie_details" javaType="java.lang.String"/>
+            <result property="movieDate" column="movie_date" javaType="java.lang.String"/>
+            <result property="movieScore" column="movie_score" javaType="java.lang.String"/>
+            <result property="movieImg" column="movie_img" javaType="java.lang.String"/>
+            <result property="moviePreparation" column="movie_preparation" javaType="java.lang.String"/>
+        </collection>
+        <collection property="positionDTOList" ofType="com.wwwy.liuxing.position.PositionDTO">
+            <id property="positionId" column="position_id" javaType="java.lang.Integer"/>
+            <result property="positionName" column="position_name" javaType="java.lang.String"/>
+            <result property="state" column="position_state" javaType="java.lang.Integer"/>
+        </collection>
+    </resultMap>
+
+    <!--根据电影院id和影厅id获取影厅信息-->
+    <select id="queryHallInfoByHallId" resultMap="HallResultMap">
+        select h.hall_id,h.hall_name,h.hall_coordinateX,h.hall_coordinateY
+        from tb_theater t
+        join tb_hall h
+        on t.theater_id = h.fk_theater_id
+        where t.theater_id=#{theaterId}
+        and h.hall_id = #{hallId}
+    </select>
+    <select id="queryExistPosition" resultMap="HallResultMap">
+        SELECT * FROM tb_hall h JOIN tb_hall_position hp JOIN tb_position p
+        ON hall_id=hp.hp_hall_id AND hp.hp_position_id=p.position_id AND hall_name=#{hallName}
+    </select>
+
+    <select id="queryAll" resultMap="HallResultMap">
+        select h.hall_id,h.hall_name,h.fk_theater_id,h.hall_coordinateX,h.hall_coordinateY
+        from tb_hall h
+    </select>
+
+    <select id="queryHallById" resultMap="HallResultMap">
+        SELECT hall_id,hall_name,fk_theater_id FROM tb_hall WHERE hall_id=#{hallId}
+    </select>
+
+    <insert id="insertHall">
+        INSERT INTO tb_hall(hall_name,fk_theater_id,hall_coordinateX,hall_coordinateY)VALUES
+        (#{hallName},#{fkTheaterId},#{hallCoordinateX},#{hallCoordinateY})
+    </insert>
+
+    <delete id="deleteHall">
+        DELETE FROM tb_hall WHERE hall_id=#{hallId}
+    </delete>
+
+    <update id="updateArea">
+        UPDATE tb_area
+        <trim prefix="set" suffixOverrides=",">
+            <if test="areaName!=null">area_name=#{areaName},</if>
+            <if test="fkCityId!=null">fk_city_id=#{fkCityId},</if>
+        </trim>
+        WHERE area_id=#{areaId}
+    </update>
+
+    <select id="queryAny" resultMap="HallResultMap">
+        SELECT a.area_id,a.area_name,a.fk_city_id,ci.city_id,ci.city_name FROM tb_area a JOIN tb_city ci ON a.fk_city_id=ci.city_id
+        WHERE area_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR area_name LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+    <!--批量删除-->
+    <delete id="batchDeleteHall" parameterType="int">
+        delete from tb_hall where hall_id in
+        <foreach item="hallId" collection="array" open="(" separator="," close=")">
+            #{hallId}
+        </foreach>
+    </delete>
+
+    <select id="getHallInfoById" resultMap="HallResultMap">
+        SELECT hall_id,hall_name,fk_theater_id,hall_coordinateX,hall_coordinateY FROM tb_hall WHERE  hall_id=#{hallId}
+    </select>
+
+    <update id="updateHallInfo">
+        UPDATE tb_hall
+        <trim prefix="set" suffixOverrides=",">
+            <if test="hallName!=null">hall_name=#{hallName},</if>
+            <if test="fkTheaterId!=null">fk_theater_id=#{fkTheaterId},</if>
+            <if test="hallCoordinateX!=null">hall_coordinateX=#{hallCoordinateX},</if>
+            <if test="hallCoordinateY!=null">hall_coordinateY=#{hallCoordinateY},</if>
+        </trim>
+        WHERE hall_id=#{hallId}
+    </update>
+
+    <select id="criteriaQueryHall" resultMap="HallResultMap">
+        SELECT hall_id,hall_name,fk_theater_id,hall_coordinateX,hall_coordinateY FROM tb_hall
+        WHERE hall_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hall_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR fk_theater_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hall_coordinateX LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hall_coordinateY LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+</mapper>

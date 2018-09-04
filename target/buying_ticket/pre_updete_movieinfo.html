@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/jquery-2.1.4.js" type="text/javascript"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/js/bootstrap.min.js" rel="stylesheet">
+    <title>Title</title>
+</head>
+<body>
+<div style="width: 60% ;height: 400px;">
+    <form style="margin: 50px 50px  auto " action="/movie/update?page=1" method="post">
+        <input type="hidden" class="form-control" id="movieId" name="movieId" value="${movieDTO.movieId}">
+        <div class="form-group">
+            <label for="movieName">电影名字</label>
+            <input type="text" class="form-control" id="movieName" name="movieName" value="${movieDTO.movieName}">
+        </div>
+        <div class="form-group">
+            <label for="movieDirector">电影导演</label>
+            <input type="text" class="form-control" id="movieDirector"  name="movieDirector" value="${movieDTO.movieDirector}">
+        </div>
+        <div class="form-group">
+            <label for="movieStar">电影主演</label>
+            <input type="text" class="form-control" id="movieStar" name="movieStar" value="${movieDTO.movieStar}">
+        </div>
+        <div class="form-group">
+            <label>电影类型</label>
+            <input type="checkbox" class="movieType"  name="movieType" value="动作">动作
+            <input type="checkbox" class="movieType"  name="movieType" value="喜剧">喜剧
+            <input type="checkbox" class="movieType"  name="movieType" value="悬疑">悬疑
+            <input type="checkbox" class="movieType"  name="movieType" value="惊悚">惊悚
+        </div>
+        <div class="form-group">
+            <label for="movieCountry">电影制作国家</label>
+            <select id="movieCountry" name="movieCountry">
+                <option>中国</option>
+                <option>美国</option>
+                <option>日本</option>
+                <option>英国</option>
+                <option>泰国</option>
+                <option>印度</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="movieLanguage">电影语言</label>
+            <select id="movieLanguage" name="movieLanguage">
+                <option>中文</option>
+                <option>英文</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="movieTime">电影时长</label>
+            <input type="text" class="form-control" id="movieTime" name="movieTime" value="${movieDTO.movieTime}">
+        </div>
+        <div class="form-group">
+            <label for="movieDetails">电影剧情详情</label>
+            <input type="text" class="form-control" id="movieDetails" name="movieDetails" value="${movieDTO.movieDetails}">
+        </div>
+        <div class="form-group">
+            <label for="movieDate">电影上映日期</label>
+            <input type="date" class="form-control" id="movieDate" name="movieDate" value="${movieDTO.movieDate}">
+        </div>
+        <div class="form-group">
+            <label for="movieScore">电影评分</label>
+            <input type="text" class="form-control" id="movieScore" name="movieScore" value="${movieDTO.movieScore}">
+        </div>
+        <div class="form-group">
+            <label for="movieImg">电影图片</label>
+            <input type="file"  id="movieImg" name="movieImg" value="${movieDTO.movieImg}">
+        </div>
+        <div class="form-group">
+            <label for="moviePreparation">电影预告链接</label>
+            <input type="text" class="form-control" id="moviePreparation" name="moviePreparation" value="${movieDTO.moviePreparation}">
+        </div>
+        <input type="submit" name="submit" value="提交" />
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>流星购票网后台管理系统</title>
+
+    <!-- Bootstrap -->
+    <link href="/css/J1706.css" rel="stylesheet"/>
+    <link href="/css/wedding-3.css" rel="stylesheet"/>
+    <script src="/js/jquery-2.1.4.js" type="text/javascript"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <!--<script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>-->
+    <![endif]-->
+</head>
+
+<body>
+
+<div>
+    <form action="/order/anyInfo?page=1" method="post" class="form_find">
+        <input type="text" name="anyInfo" style="height: 40px">
+        <input type="submit" value="find" style="font-size: 20px;background-color: #00BCD4">
+    </form>
+    <table border="1" width="60%" style="line-height: 40px;" class="water-table">
+        <thead class="water-table-content" style="font-size:16px;font-weight: bolder">
+        <td>订单id</td>
+        <td>订单编号</td>
+        <td>影片名称</td>
+        <td>影片版本</td>
+        <td>影院名称</td>
+        <td>影片价格</td>
+        <td>用户电话</td>
+        </thead>
+        <#list orderList as order>
+            <tr class="water-table-content">
+                <td style="font-size: medium">${order.cartId}</td>
+                <td style="font-size: medium">${order.bookingNum}</td>
+                <td style="font-size: medium">${order.movieName}</td>
+                <td style="font-size: medium">${order.movieVersion}</td>
+                <td style="font-size: medium">${order.cinemaName}</td>
+                <td style="font-size: medium">${order.totalPrice}</td>
+                <td style="font-size: medium">${order.tel}</td>
+            </tr>
+        </#list>
+    </table>
+</div>
+
+<div class="ma_page">
+    <p style="font-size: 14px">当前页${page.pageNum}&nbsp;&nbsp;&nbsp;一共${page.pages}页</p>
+    <a href="/order/anyInfo?page=${page.firstPage}">首页</a>
+    <a href="/order/anyInfo?page=${page.nextPage}">下一页</a>
+    <a href="/order/anyInfo?page=${page.prePage}">上一页</a>
+    <a href="/order/anyInfo?page=${page.lastPage}">末页</a>
+</div>
+
+
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

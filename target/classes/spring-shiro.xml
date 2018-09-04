@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!--<property name="unauthorizedUrl" value="error404.html"/>-->
+        <property name="filterChainDefinitions">
+            <value>
+                /testqian.jsp=anon
+                /hall/tchDelete=anon
+                /hall/update=anon
+                /hall/anyInfo=anon
+                /hall/delete=anon
+                /movie/preupdate=anon
+                /movie/delete=anon
+                /pre_updete_movieinfo.html=anon
+                /movie/update=anon
+                /hou_movieadd.html=anon
+                /movie/insert=anon
+                /img/**=anon
+                /movie/list=anon
+                /hou_movieadd.html=anon
+                /hou_movielist.html=anon
+                /user/anyInfo=anon
+                /user/update=anon
+                /pre_updete_userinfo.html=anon
+                /user/preupdate=anon
+                /hou_userlist.html=anon
+                /user/list=anon
+                /admin/login=anon
+                /qian_login.htm=anon
+                /user/login=anon
+                /index.jsp=anon
+                /hall/querySeat=anon
+                /hall/getHall=anon
+                /hou_login.html=anon
+                /hall/querySeat=anon
+                /loginCode.html=anon
+                /qian_liuxing_cinema_hall_seat.bak.html=anon
+                /message/getCode=anon
+                /message/login=anon
+                /cart/showBooking=anon
+                /success.html=anon
+                /hallTest.html=anon
+                /login.jsp=anon<!--不需要做任何过滤的-->
+                /qian_liuxing_cinema_hall_seat.html=anon<!--不需要做任何过滤的-->
+                /login.jsp=anon
+                /login.jsp=anon
+                /qian_liuxing_cinema_hall_seat.html=anon
+                /login.jsp=anon
+                /qian_liuxing_cinema_hall_seat.html=anon
+                /qian_one_movie_info.html=anon
+                /hall/getMovieHall=anon
+                /qian_pick_movie.html=anon
+                /qian_register.html=anon
+                /qian_films_list.html=anon
+                /movie/*=anon
+                /user/login=anon
+                /css/**=anon
+                /js/**=anon
+                /area/**=anon
+                /hou_area_list.html=anon
+                /hou_main_page.html=anon
+                /hou_area_add.html=anon
+                /user/register=anon
+                /hou_theater_list.html=anon
+                /theater/**=anon
+                /hou_before_theater_.html=anon
+                /hou_theater_add.html=anon
+                /plugins/**=anon
+                /areaTheater/**=anon
+                /hou_areaTheater_list.html=anon
+                /hou_area_theater_add.html=anon
+                /hou_hall_list.html=anon
+                /hall/**=anon
+                /hou_hall_add.html=anon
+                /hallMovie/**=anon
+                /hou_hall_movie_list.html=anon
+                /hou_hall_movie_add.html=anon
+                /hou_hall_movie_update.html=anon
+                /order/**=anon
+                /hou_order_any_list.html=anon
+                /**=user
+            </value>
+        </property>
+    </bean>
+    <!--cookie配置参数-->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <property name="httpOnly" value="true"/> <!--避免XSS攻击-->
+        <property name="maxAge" value="10"/><!-- 失效时间 -->
+    </bean>
+
+    <!--用cookie保存用户登录状态的帮助类-->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="rememberMeCookie"/>
+    </bean>
+
+    <bean id="UserRealm" class="com.wwwy.liuxing.user.realm.UserRealm"/>
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realms" ref="UserRealm"/>
+        <property name="rememberMeManager" ref="rememberMeManager"/>
+    </bean>
+</beans>

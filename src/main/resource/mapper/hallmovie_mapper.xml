@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxing.hallmovie.dto.HallMovieMapper">
+    <resultMap id="HallMovieResultMap" type="com.wwwy.liuxing.hallmovie.dto.HallMovieDTO">
+        <id property="haMoId" column="ha_mo_id" javaType="java.lang.Integer"/>
+        <result property="fkHallId" column="fk_hall_id" javaType="java.lang.Integer"/>
+        <result property="fkMovieId" column="fk_movie_id" javaType="java.lang.Integer"/>
+        <result property="movieRuntime" column="movie_runtime" javaType="java.lang.String"/>
+        <result property="moviePrice" column="movie_price" javaType="java.lang.Integer"/>
+        <result property="movieVersion" column="movie_version" javaType="java.lang.String"/>
+    </resultMap>
+
+    <!--##根据城市、影院、电影获取该电影院该电影的最低价格-->
+    <select id="queryLowestMoviePriceList" resultMap="HallMovieResultMap">
+        select  hm.movie_price from tb_city c
+        join tb_area area
+        join tb_area_theater area_th
+        join tb_theater th
+        join tb_hall h
+        join tb_hall_movie hm
+        join tb_movie m
+        on c.city_id = area.fk_city_id
+        and area.area_id = area_th.fk_area_id
+        and area_th.fk_theater_id = th.theater_id
+        and th.theater_id = h.fk_theater_id
+        and h.hall_id = hm.fk_hall_id
+        and hm.fk_movie_id = m.movie_id
+        where c.city_id=#{cityId}
+        and m.movie_id=#{movieId}
+        and th.theater_id=#{theaterId}
+        order by hm.movie_price asc limit 1;
+    </select>
+
+
+    <select id="queryAll" resultMap="HallMovieResultMap">
+        SELECT ha_mo_id,fk_hall_id,fk_movie_id,movie_runtime,movie_price,movie_version FROM tb_hall_movie
+    </select>
+
+    <select id="queryPlayingHallMovie" resultMap="HallMovieResultMap">
+        select hm.fk_hall_id,hm.movie_price,hm.movie_runtime,hm.movie_version from tb_city c
+        join tb_area area
+        join tb_area_theater area_th
+        join tb_theater th
+        join tb_hall h
+        join tb_hall_movie hm
+        join tb_movie m
+        on c.city_id = area.fk_city_id
+        and area.area_id = area_th.fk_area_id
+        and area_th.fk_theater_id = th.theater_id
+        and th.theater_id = h.fk_theater_id
+        and h.hall_id = hm.fk_hall_id
+        and hm.fk_movie_id = m.movie_id
+        where c.city_id=#{cityId}
+        and th.theater_id=#{theaterId}
+        and m.movie_id=#{movieId}
+        and hm.movie_runtime > now()
+    </select>
+
+    <select id="queryById" resultMap="HallMovieResultMap">
+        SELECT ha_mo_id,fk_hall_id,fk_movie_id,movie_runtime,movie_price,movie_version FROM tb_hall_movie WHERE ha_mo_id=#{haMoId}
+    </select>
+
+    <insert id="insert">
+         INSERT INTO tb_hall_movie(fk_hall_id,fk_movie_id,movie_runtime,movie_price,movie_version)VALUES
+        (#{fkHallId},#{fkMovieId},#{movieRuntime},#{moviePrice},#{movieVersion})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM tb_hall_movie WHERE ha_mo_id=#{haMoId}
+    </delete>
+
+    <update id="update">
+        UPDATE tb_hall_movie
+        <trim prefix="set" suffixOverrides=",">
+            <if test="fkHallId!=null">fk_hall_id=#{fkHallId},</if>
+            <if test="fkMovieId!=null">fk_movie_id=#{fkMovieId},</if>
+            <if test="movieRuntime!=null">movie_runtime=#{movieRuntime},</if>
+            <if test="moviePrice!=null">movie_price=#{moviePrice},</if>
+            <if test="movieVersion!=null">movie_version=#{movieVersion},</if>
+        </trim>
+        WHERE ha_mo_id=#{haMoId}
+    </update>
+
+    <select id="queryAny" resultMap="HallMovieResultMap">
+        SELECT hm.ha_mo_id,hm.fk_hall_id,hm.fk_movie_id,hm.movie_runtime,hm.movie_price,hm.movie_version FROM tb_hall h JOIN tb_hall_movie hm JOIN tb_movie m
+        ON (h.hall_id=hm.fk_hall_id AND hm.fk_movie_id=m.movie_id)
+        WHERE hm.fk_hall_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hm.fk_movie_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hm.movie_runtime LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hm.movie_price LIKE concat(concat('%',#{anyInfo}),'%')
+        OR hm.movie_version LIKE concat(concat('%',#{anyInfo}),'%')
+        OR h.hall_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR m.movie_name LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+    <!--批量删除-->
+    <delete id="batchDeleteHallMovie" parameterType="int">
+        delete from tb_area_theater where ar_th_id in
+        <foreach item="haMoId" collection="array" open="(" separator="," close=")">
+            #{haMoId}
+        </foreach>
+    </delete>
+
+</mapper>

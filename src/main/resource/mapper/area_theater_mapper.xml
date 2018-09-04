@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxin.arth.dto.AreaTheaterMapper">
+    <resultMap id="AreaTheaterResultMap" type="com.wwwy.liuxing.arth.dto.AreaTheaterDTO">
+        <id property="arThId" column="ar_th_id" javaType="java.lang.Integer"/>
+        <result property="fkArId" column="fk_area_id" javaType="java.lang.Integer"/>
+        <result property="fkThId" column="fk_theater_id" javaType="java.lang.Integer"/>
+
+    </resultMap>
+
+    <select id="queryAll" resultMap="AreaTheaterResultMap">
+        SELECT ar_th_id,fk_area_id,fk_theater_id FROM tb_area_theater
+    </select>
+
+
+
+    <select id="queryAreaTheaterById" resultMap="AreaTheaterResultMap">
+        SELECT ar_th_id,fk_area_id,fk_theater_id FROM tb_area_theater WHERE ar_th_id=#{arThId}
+    </select>
+
+    <insert id="insertAreaTheater">
+        INSERT INTO tb_area_theater(fk_area_id,fk_theater_id)VALUES (#{fkArId},#{fkThId})
+    </insert>
+
+    <delete id="deleteAreaTheater">
+        DELETE FROM tb_area_theater WHERE ar_th_id=#{arThId}
+    </delete>
+
+    <update id="updateAreaTheater">
+        UPDATE tb_area_theater
+        <trim prefix="set" suffixOverrides=",">
+            <if test="fkArId!=null">fk_area_id=#{fkArId},</if>
+            <if test="fkThId!=null">fk_theater_id=#{fkThId},</if>
+        </trim>
+        WHERE ar_th_id=#{arThId}
+    </update>
+
+    <select id="queryAny" resultMap="AreaTheaterResultMap">
+        SELECT ta.ar_th_id,ta.fk_area_id,ta.fk_theater_id FROM tb_area a JOIN tb_area_theater ta JOIN tb_theater t
+        ON (a.area_id=ta.fk_area_id AND ta.fk_theater_id=t.theater_id)
+        WHERE ta.ar_th_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR ta.fk_area_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR ta.fk_theater_id LIKE concat(concat('%',#{anyInfo}),'%')
+        OR a.area_name LIKE concat(concat('%',#{anyInfo}),'%')
+        OR t.theater_name LIKE concat(concat('%',#{anyInfo}),'%')
+    </select>
+
+    <!--批量删除-->
+    <delete id="batchDeleteAreaTheater" parameterType="int">
+        delete from tb_area_theater where ar_th_id in
+        <foreach item="arThId" collection="array" open="(" separator="," close=")">
+            #{arThId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,174 @@
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <meta name="description" content="User login page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <script src="js/layer.ext.js"></script>
+    <script src="js/jquery-2.1.4.js" type="text/javascript"/>
+    <script src="js/layer.js"></script>
+
+    <!-- basic styles -->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="css/font-awesome-ie7.min.css" />
+    <![endif]-->
+
+    <!-- page specific plugin styles -->
+
+    <!-- fonts -->
+
+    <!--layer-->
+
+    <link rel="stylesheet" href="css/layer.css" />
+
+    <link rel="stylesheet" href="css/layer.ext.css" />
+    <!-- ace styles -->
+    <link rel="stylesheet" href="css/ace.min.css" />
+    <link rel="stylesheet" href="css/ace-rtl.min.css" />
+
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="css/ace-ie.min.css" />
+    <![endif]-->
+
+    <!-- inline styles related to this page -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+    <!--[if lt IE 9]>
+    <![endif]-->
+    <script type="text/javascript">
+        if (window.location.href!=window.parent.location.href){
+            window.parent.location.href=window.location.href;
+        }
+    </script>
+
+</head>
+
+
+<body class="login-layout" style="background:#6fb3e0" >
+<div class="main-container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="login-container">
+                    <div style="height:100px;"><!-- <img src="/Public/images/logo.png" style="margin-left:30px"> --></div>
+
+                    <div class="space-6"></div>
+
+                    <div class="position-relative">
+                        <div id="login-box"  class="login-box visible widget-box no-border">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <h4 class="header blue lighter bigger" style=" text-align:center; font-size: 27px;">
+                                        流星购票后台管理系统
+                                    </h4>
+
+                                    <div class="space-6"></div>
+
+                                    <form class="form-vertical login-form" method="POST" action="" >
+                                        <fieldset>
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+														<input type="text" class="form-control" placeholder="登录账号" name="adminName" id="adminName"
+                                                               value="" required="required"/>
+															<i class="icon-user"></i>
+														</span>
+                                            </label>
+
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" class="form-control" placeholder="密码" name="adminPassword" id="adminPassword" required="required"/>
+															<i class="icon-lock"></i>
+														</span>
+                                            </label>
+
+                                            <div class="space"></div>
+
+                                            <div class="clearfix">
+                                                <!--					<input name="verify"  type="text" maxlength="5" placeholder="验证码" class="form-control" style="vertical-align:middle;width:90px;display:inline" required="required"/>
+                                                                    <img id="verify" src="/index.php/Admin/verify" onclick="getVerify(this)" style="width:90px;height:33px;vertical-align:middle;cursor:pointer">-->
+                                                    <input type="button" value="立即登录"  class="width-100 pull-right btn btn-sm btn-primary" onclick="login()" />
+
+
+                                                </button>
+                                                <a id="notice" style="display:none;" href="https://www.baidu.com/s?wd=%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8&rsv_spt=1&rsv_iqid=0xad459873000d9d97&issp=1&f=8&rsv_bp=0&rsv_idx=2&ie=utf-8&tn=98012088_5_dg&rsv_enter=1&rsv_sug3=2&rsv_n=2" target="_blank">系统检测您的浏览器可能存在兼容问题，建议下载【谷歌浏览器】</a>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                        </fieldset>
+                                    </form>
+                                    <!--
+
+                                    -->
+                                </div>
+                            </div><!-- /widget-body -->
+                        </div><!-- /login-box -->
+
+
+
+
+                    </div><!-- /position-relative -->
+                </div>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div>
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+
+<!--[if !IE]> -->
+
+
+<!-- <![endif]-->
+
+
+
+<!--[if !IE]> -->
+
+<script>
+    function login() {
+        var adminNameStr = $("#adminName").val();
+        var adminPasswordStr = $("#adminPassword").val();
+        var errArrays = new Array();
+        errArrays[0] ='账号输入错误，请重新输入';
+        errArrays[1] ='登录成功';
+        errArrays[2] ='密码错误，请重新输入';
+        //完成登录
+        $.post("/admin/login",
+                {adminName:adminNameStr,adminPassword:adminPasswordStr},
+                function(data) {
+                    var jsonObj = JSON.parse(data)
+                    var index =jsonObj.code;
+                    if ( jsonObj.code== 1) {
+                        alert(errArrays[index])
+                        window.location.href="/hou_main_page.html";
+                    } else {
+                        alert(errArrays[index]);
+                    }
+                });
+         }
+</script>
+
+<!-- <![endif]-->
+
+<!--[if IE]>
+<script type="text/javascript">
+    window.jQuery || document.write("<script src='/Public/assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+
+
+<!-- inline scripts related to this page -->
+
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+登陆成功！！！！！
+${cart}
+<table>
+    <tr>
+        <td>电影名称</td>
+        <td>观看时间</td>
+        <td>影院名称</td>
+        <td>座位</td>
+    </tr>
+    <tr>
+        <td>${cart.movieName}</td>
+        <td>${cart.watchingTime}</td>
+        <td>${cart.cinemaName}</td>
+        <td>
+            <span>${cart.hallName}</span>
+            <span>${cart.selectedSets}</span>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wwwy.liuxing.user.dto.AdminMapper">
+    <resultMap id="AdminResultMap" type="com.wwwy.liuxing.admin.dto.AdminDto">
+        <id property="adminId" column="admin_id" javaType="java.lang.Integer"/>
+        <result property="adminName" column="admin_name" javaType="java.lang.String"/>
+        <result property="adminPassword" column="admin_password" javaType="java.lang.String"/>
+    </resultMap>
+
+    <select id="getNameAndPassWord" resultMap="AdminResultMap">
+        select admin_name,admin_password from tb_admin WHERE admin_name=#{adminName};
+    </select>
+
+</mapper>
